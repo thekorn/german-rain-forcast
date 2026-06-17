@@ -1,0 +1,12 @@
+[test]
+randomize = true
+coverage = true
+coverageReporter = ["text", "lcov"]
+coverageDir = "./coverage"
+preload = [
+  "./src/client/test/solid-plugin.ts",
+  "./src/client/test/happydom.ts",
+  "./src/client/test/testing-library.ts",
+]
+
+coveragePathIgnorePatterns = ["src/client/test/*.ts"]

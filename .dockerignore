@@ -1,0 +1,9 @@
+node_modules
+Dockerfile*
+.dockerignore
+.git
+README.md
+.zed
+.env
+AGENTS.md
+docs

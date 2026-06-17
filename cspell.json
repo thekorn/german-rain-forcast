@@ -1,0 +1,13 @@
+{
+  "words": [
+    "shoreman",
+    "logtape",
+    "solidjs",
+    "Procfile",
+    "oxlint",
+    "happydom",
+    "bunqueue",
+    "registrator"
+  ],
+  "ignorePaths": ["node_modules/**", "scripts/**", "dist/**", ".zed/settings.json"]
+}
