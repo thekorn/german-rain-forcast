@@ -73,10 +73,16 @@ export class ForecastCacheService {
   private refreshState: RefreshState = { status: 'empty' };
 
   constructor(options: ForecastCacheServiceOptions = {}) {
+    const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
+    const batchSize = options.batchSize ?? DEFAULT_BATCH_SIZE;
+
+    assertPositiveFiniteNumber(ttlMs, 'ttlMs');
+    assertPositiveInteger(batchSize, 'batchSize');
+
     this.fetcher = options.fetcher ?? fetch;
     this.now = options.now ?? Date.now;
-    this.ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
-    this.batchSize = options.batchSize ?? DEFAULT_BATCH_SIZE;
+    this.ttlMs = ttlMs;
+    this.batchSize = batchSize;
     this.gridPoints = options.gridPoints ?? generateGermanyForecastGrid();
     this.endpoint = options.endpoint ?? DWD_ICON_ENDPOINT;
   }
@@ -250,6 +256,8 @@ export class ForecastCacheService {
 }
 
 export function generateGermanyForecastGrid(step = 1): ForecastGridPoint[] {
+  assertPositiveFiniteNumber(step, 'step');
+
   const grid: ForecastGridPoint[] = [];
 
   for (let latitude = 47; latitude <= 55; latitude += step) {
@@ -297,7 +305,7 @@ function normalizeForecast(forecast: OpenMeteoForecast): {
 
 function normalizeTime(value: unknown): string {
   if (typeof value === 'number') {
-    return new Date(value * 1000).toISOString();
+    return formatLocalDateTime(new Date(value * 1000));
   }
 
   if (typeof value !== 'string') {
@@ -318,7 +326,7 @@ function normalizeTime(value: unknown): string {
     throw new Error(`Open-Meteo response contains invalid time value: ${value}`);
   }
 
-  return parsed.toISOString();
+  return formatLocalDateTime(parsed);
 }
 
 function sameTimes(left: string[], right: string[]): boolean {
@@ -326,6 +334,8 @@ function sameTimes(left: string[], right: string[]): boolean {
 }
 
 function chunk<T>(values: T[], size: number): T[][] {
+  assertPositiveInteger(size, 'size');
+
   const chunks: T[][] = [];
 
   for (let index = 0; index < values.length; index += size) {
@@ -341,6 +351,33 @@ function formatCoordinate(value: number): string {
 
 function roundCoordinate(value: number): number {
   return Number(value.toFixed(4));
+}
+
+function assertPositiveFiniteNumber(value: number, name: string): void {
+  if (!Number.isFinite(value) || value <= 0) {
+    throw new Error(`${name} must be a positive finite number`);
+  }
+}
+
+function assertPositiveInteger(value: number, name: string): void {
+  if (!Number.isInteger(value) || value <= 0) {
+    throw new Error(`${name} must be a positive integer`);
+  }
+}
+
+function formatLocalDateTime(value: Date): string {
+  const year = value.getFullYear();
+  const month = padDatePart(value.getMonth() + 1);
+  const day = padDatePart(value.getDate());
+  const hour = padDatePart(value.getHours());
+  const minute = padDatePart(value.getMinutes());
+  const second = padDatePart(value.getSeconds());
+
+  return `${year}-${month}-${day}T${hour}:${minute}:${second}`;
+}
+
+function padDatePart(value: number): string {
+  return value.toString().padStart(2, '0');
 }
 
 function toIsoString(value?: number): string | undefined {

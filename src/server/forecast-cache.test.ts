@@ -74,6 +74,15 @@ describe('ForecastCacheService', () => {
     expect(requests[1]?.searchParams.get('latitude')).toBe('49');
   });
 
+  test('rejects invalid cache options', () => {
+    expect(() => new ForecastCacheService({ ttlMs: 0 })).toThrow(
+      'ttlMs must be a positive finite number',
+    );
+    expect(() => new ForecastCacheService({ batchSize: 0 })).toThrow(
+      'batchSize must be a positive integer',
+    );
+  });
+
   test('serves stale data and reports refresh errors when an expired refresh fails', async () => {
     let now = Date.UTC(2026, 5, 17, 8);
     let fail = false;
@@ -110,6 +119,10 @@ describe('ForecastCacheService', () => {
     expect(grid).toHaveLength(90);
     expect(grid[0]).toEqual({ latitude: 47, longitude: 6 });
     expect(grid.at(-1)).toEqual({ latitude: 55, longitude: 15 });
+  });
+
+  test('rejects invalid grid steps', () => {
+    expect(() => generateGermanyForecastGrid(0)).toThrow('step must be a positive finite number');
   });
 });
 
