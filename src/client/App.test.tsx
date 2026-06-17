@@ -1,4 +1,3 @@
-import type { RouteSectionProps } from '@solidjs/router';
 import { beforeEach, describe, expect, mock, test } from 'bun:test';
 import { createSignal } from 'solid-js';
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library';
@@ -64,19 +63,6 @@ class MockMap {
   }
 }
 
-const stubRouteProps: RouteSectionProps = {
-  params: {},
-  location: {
-    pathname: '/',
-    search: '',
-    hash: '',
-    query: {},
-    state: null,
-    key: 'test',
-  },
-  data: undefined,
-};
-
 mock.module('./api.ts', () => ({
   fetchRainForecast: async () => createForecast(),
 }));
@@ -97,7 +83,7 @@ describe('App', () => {
   });
 
   test('renders the Germany map shell', async () => {
-    render(() => <App {...stubRouteProps} />);
+    render(() => <App />);
     const mapRegion = screen.getByRole('region', { name: 'Karte von Deutschland' });
 
     expect(mapRegion).toBeInTheDocument();
@@ -109,7 +95,7 @@ describe('App', () => {
   });
 
   test('binds the timeline slider and playback button to forecast state', async () => {
-    render(() => <App {...stubRouteProps} />);
+    render(() => <App />);
 
     const [map] = mapInstances;
 
@@ -140,7 +126,7 @@ describe('App', () => {
   });
 
   test('creates one playback interval and clears it on pause and unmount', async () => {
-    const { unmount } = render(() => <App {...stubRouteProps} />);
+    const { unmount } = render(() => <App />);
     const playButton = screen.getByRole('button', { name: 'Animation starten' });
 
     await waitFor(() => {
@@ -199,7 +185,7 @@ describe('App', () => {
   });
 
   test('initializes a Germany-centered MapLibre map and cleans it up', () => {
-    const { unmount } = render(() => <App {...stubRouteProps} />);
+    const { unmount } = render(() => <App />);
     expect(mapInstances).toHaveLength(1);
 
     const [map] = mapInstances;

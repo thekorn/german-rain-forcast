@@ -23,12 +23,7 @@ export function ForecastTimelineControls(props: ForecastTimelineControlsProps) {
           type="button"
           onClick={props.onTogglePlayback}
         >
-          <svg
-            aria-hidden="true"
-            class="h-7 w-7"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg aria-hidden="true" class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
             {props.isPlaying ? (
               <path d="M7.5 5.5h3.5v13h-3.5zM13 5.5h3.5v13H13z" />
             ) : (

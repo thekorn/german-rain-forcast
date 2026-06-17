@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@logtape/logtape": "^2.1.5",
-    "@solidjs/router": "^0.16.1",
     "bunqueue": "^2.8.20",
     "effect": "^3.21.3",
     "maplibre-gl": "^5.24.0",
