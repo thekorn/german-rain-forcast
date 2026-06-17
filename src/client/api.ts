@@ -6,7 +6,9 @@ export async function fetchRainForecast(): Promise<RainForecastResponse> {
   if (!response.ok) {
     const detail = await readErrorDetail(response);
     throw new Error(
-      detail ? `Rain forecast data is unavailable: ${detail}` : 'Rain forecast data is unavailable',
+      detail
+        ? `Regenradar-Daten sind derzeit nicht verfügbar: ${detail}`
+        : 'Regenradar-Daten sind derzeit nicht verfügbar',
     );
   }
 

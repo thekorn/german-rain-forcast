@@ -36,7 +36,7 @@ const MAP_STYLE: StyleSpecification = {
       id: 'background',
       type: 'background',
       paint: {
-        'background-color': '#dbe7de',
+        'background-color': '#eef2f6',
       },
     },
     {
@@ -56,7 +56,7 @@ const MAP_STYLE: StyleSpecification = {
       'source-layer': 'waterway',
       filter: ['==', ['get', 'class'], 'river'],
       paint: {
-        'line-color': '#79aebf',
+        'line-color': '#8fb7ce',
         'line-opacity': 0.55,
         'line-width': ['interpolate', ['linear'], ['zoom'], 4, 0.7, 6, 1.4],
       },
@@ -68,7 +68,7 @@ const MAP_STYLE: StyleSpecification = {
       'source-layer': 'boundary',
       filter: ['all', ['==', ['get', 'admin_level'], 2], ['!=', ['get', 'maritime'], 1]],
       paint: {
-        'line-color': '#334155',
+        'line-color': '#072f6b',
         'line-opacity': 0.85,
         'line-width': ['interpolate', ['linear'], ['zoom'], 4, 1.1, 6, 1.8],
       },
@@ -85,7 +85,7 @@ const MAP_STYLE: StyleSpecification = {
         ['!=', ['get', 'maritime'], 1],
       ],
       paint: {
-        'line-color': '#64748b',
+        'line-color': '#3f6498',
         'line-dasharray': [2, 2],
         'line-opacity': 0.35,
         'line-width': 0.8,
@@ -103,8 +103,8 @@ const MAP_STYLE: StyleSpecification = {
         'text-size': ['interpolate', ['linear'], ['zoom'], 4, 10, 6, 13],
       },
       paint: {
-        'text-color': '#0f172a',
-        'text-halo-color': '#e6efe9',
+        'text-color': '#041d42',
+        'text-halo-color': '#f4f6f8',
         'text-halo-width': 1.2,
       },
     },
@@ -121,8 +121,8 @@ const MAP_STYLE: StyleSpecification = {
         'text-size': ['interpolate', ['linear'], ['zoom'], 4, 11, 6, 14],
       },
       paint: {
-        'text-color': '#475569',
-        'text-halo-color': '#e6efe9',
+        'text-color': '#072f6b',
+        'text-halo-color': '#f4f6f8',
         'text-halo-width': 1.4,
       },
     },
@@ -179,7 +179,7 @@ export function GermanyMap(props: GermanyMapProps) {
   });
 
   return (
-    <div aria-label="Map of Germany" class="absolute inset-0" role="region">
+    <div aria-label="Karte von Deutschland" class="absolute inset-0" role="region">
       <div
         ref={(element) => {
           mapContainer = element;

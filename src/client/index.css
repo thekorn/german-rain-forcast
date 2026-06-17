@@ -1,2 +1,48 @@
 @import 'tailwindcss';
 @import 'maplibre-gl/dist/maplibre-gl.css';
+
+:root {
+  --news-blue: #072f6b;
+  --news-blue-deep: #041d42;
+  --news-red: #e30613;
+  --news-paper: #f4f6f8;
+  --news-ink: #111827;
+}
+
+body {
+  background: var(--news-paper);
+  color: var(--news-ink);
+  font-family:
+    Avenir Next,
+    Trebuchet MS,
+    Verdana,
+    sans-serif;
+}
+
+.display-font {
+  font-family:
+    Charter,
+    Iowan Old Style,
+    Baskerville,
+    Georgia,
+    serif;
+}
+
+.forecast-range::-webkit-slider-thumb {
+  width: 1.25rem;
+  height: 1.25rem;
+  appearance: none;
+  border: 3px solid white;
+  border-radius: 9999px;
+  background: var(--news-red);
+  box-shadow: 0 4px 14px rgb(4 29 66 / 28%);
+}
+
+.forecast-range::-moz-range-thumb {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 3px solid white;
+  border-radius: 9999px;
+  background: var(--news-red);
+  box-shadow: 0 4px 14px rgb(4 29 66 / 28%);
+}

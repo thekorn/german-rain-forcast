@@ -98,15 +98,14 @@ describe('App', () => {
 
   test('renders the Germany map shell', async () => {
     render(() => <App {...stubRouteProps} />);
-    const mapRegion = screen.getByRole('region', { name: 'Map of Germany' });
+    const mapRegion = screen.getByRole('region', { name: 'Karte von Deutschland' });
 
     expect(mapRegion).toBeInTheDocument();
     expect(mapRegion).toHaveClass('absolute', 'inset-0');
-    expect(screen.getByRole('heading', { name: 'DWD ICON precipitation map' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Rain cloud overlay' })).toBeInTheDocument();
-    expect(
-      await screen.findByRole('button', { name: 'Play forecast playback' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Regenradar' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Regenradar für Deutschland' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Niederschlag' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Animation starten' })).toBeInTheDocument();
   });
 
   test('binds the timeline slider and playback button to forecast state', async () => {
@@ -118,23 +117,23 @@ describe('App', () => {
       expect(map?.getSource('rain-forecast')?.data.features[0]?.properties.precipitation).toBe(1);
     });
 
-    const slider = screen.getByRole('slider', { name: 'Forecast timestep' });
+    const slider = screen.getByRole('slider', { name: 'Prognosezeitpunkt' });
     fireEvent.input(slider, { target: { value: '1' } });
 
     await waitFor(() => {
       expect(map?.getSource('rain-forecast')?.data.features[0]?.properties.precipitation).toBe(3);
     });
 
-    const playButton = screen.getByRole('button', { name: 'Play forecast playback' });
+    const playButton = screen.getByRole('button', { name: 'Animation starten' });
     expect(playButton).toHaveAttribute('aria-pressed', 'false');
     fireEvent.click(playButton);
-    expect(screen.getByRole('button', { name: 'Pause forecast playback' })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: 'Animation pausieren' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Pause forecast playback' }));
-    expect(screen.getByRole('button', { name: 'Play forecast playback' })).toHaveAttribute(
+    fireEvent.click(screen.getByRole('button', { name: 'Animation pausieren' }));
+    expect(screen.getByRole('button', { name: 'Animation starten' })).toHaveAttribute(
       'aria-pressed',
       'false',
     );
@@ -142,7 +141,7 @@ describe('App', () => {
 
   test('creates one playback interval and clears it on pause and unmount', async () => {
     const { unmount } = render(() => <App {...stubRouteProps} />);
-    const playButton = screen.getByRole('button', { name: 'Play forecast playback' });
+    const playButton = screen.getByRole('button', { name: 'Animation starten' });
 
     await waitFor(() => {
       expect(playButton).toBeEnabled();
@@ -170,10 +169,10 @@ describe('App', () => {
       expect(intervalCalls[0]?.delay).toBe(400);
       expect(clearIntervalCalls).toHaveLength(0);
 
-      fireEvent.click(screen.getByRole('button', { name: 'Pause forecast playback' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Animation pausieren' }));
       expect(clearIntervalCalls).toEqual([1]);
 
-      fireEvent.click(screen.getByRole('button', { name: 'Play forecast playback' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Animation starten' }));
       expect(intervalCalls).toHaveLength(2);
 
       unmount();
@@ -195,8 +194,8 @@ describe('App', () => {
       />
     ));
 
-    expect(screen.getByRole('button', { name: 'Play forecast playback' })).toBeDisabled();
-    expect(screen.getByRole('slider', { name: 'Forecast timestep' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Animation starten' })).toBeDisabled();
+    expect(screen.getByRole('slider', { name: 'Prognosezeitpunkt' })).toBeEnabled();
   });
 
   test('initializes a Germany-centered MapLibre map and cleans it up', () => {
@@ -230,7 +229,9 @@ describe('App', () => {
       },
     ]);
     expect(map?.options.container).toHaveClass('h-full', 'w-full');
-    expect(map?.options.container).not.toBe(screen.getByRole('region', { name: 'Map of Germany' }));
+    expect(map?.options.container).not.toBe(
+      screen.getByRole('region', { name: 'Karte von Deutschland' }),
+    );
 
     unmount();
     expect(map?.removed).toBe(true);

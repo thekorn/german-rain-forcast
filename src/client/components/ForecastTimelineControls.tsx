@@ -10,28 +10,27 @@ export function ForecastTimelineControls(props: ForecastTimelineControlsProps) {
   const hasTimes = () => props.times.length > 0;
   const canPlay = () => props.times.length > 1;
   const selectedTime = () => props.times[props.selectedTimeIndex];
-  const playbackLabel = () =>
-    props.isPlaying ? 'Pause forecast playback' : 'Play forecast playback';
+  const playbackLabel = () => (props.isPlaying ? 'Animation pausieren' : 'Animation starten');
 
   return (
-    <section class="absolute inset-x-4 bottom-4 rounded-3xl bg-slate-950/85 p-4 shadow-2xl ring-1 ring-white/15 backdrop-blur">
+    <section class="absolute inset-x-4 bottom-4 z-10 border-t-[6px] border-[#e30613] bg-white/96 p-4 shadow-[0_18px_45px_rgba(4,29,66,0.22)] ring-1 ring-slate-900/10 backdrop-blur sm:inset-x-6">
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <button
           aria-label={playbackLabel()}
           aria-pressed={props.isPlaying}
-          class="rounded-full bg-sky-300 px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg ring-1 shadow-sky-950/30 ring-white/25 transition hover:bg-sky-200 focus:ring-2 focus:ring-sky-100 focus:outline-none disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-slate-400"
+          class="bg-[#e30613] px-5 py-2 text-sm font-black tracking-[0.08em] text-white uppercase shadow-lg shadow-red-950/20 transition hover:bg-[#c7000b] focus:ring-2 focus:ring-[#072f6b] focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"
           disabled={!canPlay()}
           type="button"
           onClick={props.onTogglePlayback}
         >
-          {props.isPlaying ? 'Pause' : 'Play'}
+          {props.isPlaying ? 'Pause' : 'Abspielen'}
         </button>
         <label class="sr-only" for="forecast-time">
-          Forecast timestep
+          Prognosezeitpunkt
         </label>
         <input
           id="forecast-time"
-          class="h-2 flex-1 cursor-pointer appearance-none rounded-full bg-white/20 accent-sky-300 disabled:cursor-not-allowed disabled:opacity-50"
+          class="forecast-range h-2 flex-1 cursor-pointer appearance-none rounded-full bg-slate-200 accent-[#e30613] disabled:cursor-not-allowed disabled:opacity-50"
           disabled={!hasTimes()}
           max={Math.max(props.times.length - 1, 0)}
           min="0"
@@ -39,8 +38,8 @@ export function ForecastTimelineControls(props: ForecastTimelineControlsProps) {
           value={props.selectedTimeIndex}
           onInput={(event) => props.onSelectTime(Number(event.currentTarget.value))}
         />
-        <p class="min-w-48 text-left text-sm text-slate-200 sm:text-right">
-          {selectedTime() ? formatForecastTime(selectedTime() ?? '') : 'No forecast timesteps'}
+        <p class="min-w-56 text-left text-sm font-black text-[#041d42] sm:text-right">
+          {selectedTime() ? formatForecastTime(selectedTime() ?? '') : 'Keine Prognosezeitpunkte'}
         </p>
       </div>
     </section>
@@ -64,13 +63,13 @@ function formatForecastTime(value: string): string {
   }
 
   return (
-    new Intl.DateTimeFormat('en-GB', {
+    new Intl.DateTimeFormat('de-DE', {
       timeZone: 'UTC',
       weekday: 'short',
       day: '2-digit',
-      month: 'short',
+      month: 'long',
       hour: '2-digit',
       minute: '2-digit',
-    }).format(date) + ' Europe/Berlin'
+    }).format(date) + ' Uhr'
   );
 }
