@@ -1,7 +1,7 @@
 import type { RouteSectionProps } from '@solidjs/router';
 import { beforeEach, describe, expect, mock, test } from 'bun:test';
 import { createSignal } from 'solid-js';
-import { render, screen, waitFor } from '@solidjs/testing-library';
+import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library';
 import type { ForecastFeatureCollection, RainForecastResponse } from './forecast.ts';
 
 type MapOptions = {
@@ -89,7 +89,7 @@ describe('App', () => {
     mapInstances.length = 0;
   });
 
-  test('renders the Germany map shell', () => {
+  test('renders the Germany map shell', async () => {
     render(() => <App {...stubRouteProps} />);
     const mapRegion = screen.getByRole('region', { name: 'Map of Germany' });
 
@@ -97,7 +97,33 @@ describe('App', () => {
     expect(mapRegion).toHaveClass('absolute', 'inset-0');
     expect(screen.getByRole('heading', { name: 'DWD ICON precipitation map' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Rain intensity' })).toBeInTheDocument();
-    expect(screen.getByText('Playback soon')).toBeInTheDocument();
+    expect(
+      await screen.findByRole('button', { name: 'Play forecast playback' }),
+    ).toBeInTheDocument();
+  });
+
+  test('binds the timeline slider and playback button to forecast state', async () => {
+    render(() => <App {...stubRouteProps} />);
+
+    const [map] = mapInstances;
+
+    await waitFor(() => {
+      expect(map?.getSource('rain-forecast')?.data.features[0]?.properties.precipitation).toBe(1);
+    });
+
+    const slider = screen.getByRole('slider', { name: 'Forecast timestep' });
+    fireEvent.input(slider, { target: { value: '1' } });
+
+    await waitFor(() => {
+      expect(map?.getSource('rain-forecast')?.data.features[0]?.properties.precipitation).toBe(3);
+    });
+
+    const playButton = screen.getByRole('button', { name: 'Play forecast playback' });
+    fireEvent.click(playButton);
+    expect(screen.getByRole('button', { name: 'Pause forecast playback' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Pause forecast playback' }));
+    expect(screen.getByRole('button', { name: 'Play forecast playback' })).toBeInTheDocument();
   });
 
   test('initializes a Germany-centered MapLibre map and cleans it up', () => {
@@ -164,7 +190,7 @@ function createForecast(): RainForecastResponse {
   return {
     model: 'dwd-icon',
     timezone: 'Europe/Berlin',
-    times: ['2026-06-17T09:00:00', '2026-06-17T10:00:00'],
+    times: ['2099-06-17T09:00:00', '2099-06-17T10:00:00'],
     units: {
       precipitation: 'mm',
     },
