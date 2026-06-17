@@ -103,7 +103,7 @@ describe('App', () => {
     expect(mapRegion).toBeInTheDocument();
     expect(mapRegion).toHaveClass('absolute', 'inset-0');
     expect(screen.getByRole('heading', { name: 'DWD ICON precipitation map' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Rain intensity' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Rain cloud overlay' })).toBeInTheDocument();
     expect(
       await screen.findByRole('button', { name: 'Play forecast playback' }),
     ).toBeInTheDocument();
@@ -251,7 +251,10 @@ describe('App', () => {
       expect(source?.data.features[0]?.properties.precipitation).toBe(3);
     });
     expect(mapInstances).toHaveLength(1);
-    expect(map?.layers).toHaveLength(2);
+    expect(map?.layers).toEqual([
+      expect.objectContaining({ id: 'rain-forecast-cloud', type: 'heatmap' }),
+      expect.objectContaining({ id: 'rain-forecast-core', type: 'heatmap' }),
+    ]);
   });
 
   test('renders an empty forecast overlay for empty data or an out-of-range timestep', async () => {

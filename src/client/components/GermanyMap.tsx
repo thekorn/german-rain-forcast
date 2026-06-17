@@ -129,8 +129,8 @@ const MAP_STYLE: StyleSpecification = {
   ],
 };
 const FORECAST_SOURCE_ID = 'rain-forecast';
-const FORECAST_HEATMAP_LAYER_ID = 'rain-forecast-heatmap';
-const FORECAST_CIRCLE_LAYER_ID = 'rain-forecast-circles';
+const FORECAST_CLOUD_LAYER_ID = 'rain-forecast-cloud';
+const FORECAST_CORE_LAYER_ID = 'rain-forecast-core';
 const EMPTY_FORECAST_GEOJSON: ForecastFeatureCollection = {
   type: 'FeatureCollection',
   features: [],
@@ -199,10 +199,9 @@ export function GermanyMap(props: GermanyMapProps) {
 
     map.addLayer(
       {
-        id: FORECAST_HEATMAP_LAYER_ID,
+        id: FORECAST_CLOUD_LAYER_ID,
         type: 'heatmap',
         source: FORECAST_SOURCE_ID,
-        maxzoom: 8,
         paint: {
           'heatmap-weight': [
             'interpolate',
@@ -217,23 +216,23 @@ export function GermanyMap(props: GermanyMapProps) {
             8,
             1,
           ],
-          'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 4, 0.9, 8, 1.8],
-          'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 4, 24, 8, 42],
-          'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 6, 0.75, 8, 0.25],
+          'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 4, 1.15, 8, 2.2],
+          'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 4, 44, 6, 72, 8, 108],
+          'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 4, 0.82, 7, 0.68, 8, 0.42],
           'heatmap-color': [
             'interpolate',
             ['linear'],
             ['heatmap-density'],
             0,
-            'rgba(14, 165, 233, 0)',
-            0.2,
-            'rgba(125, 211, 252, 0.55)',
-            0.45,
-            'rgba(59, 130, 246, 0.72)',
-            0.7,
-            'rgba(124, 58, 237, 0.82)',
+            'rgba(219, 234, 254, 0)',
+            0.16,
+            'rgba(186, 230, 253, 0.26)',
+            0.38,
+            'rgba(125, 211, 252, 0.46)',
+            0.62,
+            'rgba(59, 130, 246, 0.58)',
             1,
-            'rgba(225, 29, 72, 0.9)',
+            'rgba(29, 78, 216, 0.62)',
           ],
         },
       },
@@ -242,44 +241,41 @@ export function GermanyMap(props: GermanyMapProps) {
 
     map.addLayer(
       {
-        id: FORECAST_CIRCLE_LAYER_ID,
-        type: 'circle',
+        id: FORECAST_CORE_LAYER_ID,
+        type: 'heatmap',
         source: FORECAST_SOURCE_ID,
-        minzoom: 4,
-        filter: ['>', ['get', 'precipitation'], 0],
         paint: {
-          'circle-radius': [
+          'heatmap-weight': [
             'interpolate',
             ['linear'],
             ['get', 'precipitation'],
             0,
+            0,
+            1.5,
+            0.18,
             4,
-            1,
-            8,
-            5,
-            16,
+            0.52,
             15,
-            26,
+            1,
           ],
-          'circle-color': [
+          'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 4, 0.8, 8, 1.45],
+          'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 4, 22, 6, 38, 8, 62],
+          'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 4, 0.68, 7, 0.58, 8, 0.34],
+          'heatmap-color': [
             'interpolate',
             ['linear'],
-            ['get', 'precipitation'],
+            ['heatmap-density'],
             0,
-            '#bae6fd',
-            0.5,
-            '#38bdf8',
-            2,
-            '#2563eb',
-            8,
-            '#7c3aed',
-            15,
-            '#e11d48',
+            'rgba(37, 99, 235, 0)',
+            0.3,
+            'rgba(37, 99, 235, 0.14)',
+            0.58,
+            'rgba(124, 58, 237, 0.5)',
+            0.78,
+            'rgba(147, 51, 234, 0.68)',
+            1,
+            'rgba(225, 29, 72, 0.78)',
           ],
-          'circle-opacity': 0.85,
-          'circle-stroke-color': '#ffffff',
-          'circle-stroke-opacity': 0.75,
-          'circle-stroke-width': 1,
         },
       },
       'city-labels',
