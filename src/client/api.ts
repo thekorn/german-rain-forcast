@@ -2,8 +2,22 @@ import { getLogger } from '@logtape/logtape';
 import { wsClient } from '@ws-kit/client/valibot';
 import { createSignal } from 'solid-js';
 import { ErrorMessage, Message } from '../shared/messages.ts';
+import type { RainForecastResponse } from './forecast.ts';
 
 const logger = getLogger(['german-rain-forecast', 'api']);
+
+export async function fetchRainForecast(): Promise<RainForecastResponse> {
+  const response = await fetch('/api/rain-forecast');
+
+  if (!response.ok) {
+    const detail = await readErrorDetail(response);
+    throw new Error(
+      detail ? `Rain forecast data is unavailable: ${detail}` : 'Rain forecast data is unavailable',
+    );
+  }
+
+  return (await response.json()) as RainForecastResponse;
+}
 
 export function createConnection() {
   const [error, setError] = createSignal<string | null>(null);
@@ -49,4 +63,13 @@ export function createConnection() {
     error,
     connected,
   };
+}
+
+async function readErrorDetail(response: Response): Promise<string | undefined> {
+  try {
+    const body = (await response.json()) as { error?: { detail?: string; message?: string } };
+    return body.error?.detail ?? body.error?.message;
+  } catch {
+    return undefined;
+  }
 }
