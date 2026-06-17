@@ -2,6 +2,7 @@ import './logging.ts';
 import { join } from 'node:path';
 import { getLogger } from '@logtape/logtape';
 import { PORT } from './env.ts';
+import { forecastCache } from './forecast-cache.ts';
 import { wsFetch, websocket } from './ws.ts';
 
 const logger = getLogger(['sample-project', 'server']);
@@ -36,3 +37,11 @@ Bun.serve({
   websocket,
 });
 logger.info('Server running on http://localhost:{port}', { port: PORT });
+
+forecastCache.startBackgroundRefresh({
+  onError(error) {
+    logger.error('Forecast cache refresh failed: {error}', {
+      error: error instanceof Error ? error.message : String(error),
+    });
+  },
+});
