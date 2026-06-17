@@ -2,6 +2,14 @@
 
 ## Overview
 
+German Rain Forecast shows an interactive Germany-wide rain forecast map. The app loads hourly precipitation forecasts from the DWD ICON model through Open-Meteo and renders the data as a browser map with timeline playback controls.
+
+## Forecast data
+
+- **Source**: [Open-Meteo DWD ICON API](https://open-meteo.com/en/docs/dwd-api), using hourly `precipitation` values in millimeters for Germany grid points.
+- **Update cadence**: the backend keeps a shared in-memory forecast cache for one hour. Requests within that window are served from the cache instead of calling Open-Meteo per user request.
+- **Refresh behavior**: a background refresh starts when the server boots and repeats hourly. If a refresh fails after data was already cached, the API keeps serving the stale cached forecast with refresh metadata so the map remains usable.
+
 ## Tech Stack
 
 - **Runtime**: [Bun](https://bun.sh)
