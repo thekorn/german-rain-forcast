@@ -10,9 +10,8 @@
 
 ## Architecture
 
-- **`src/server/`** — Bun.serve() HTTP + WebSocket server
+- **`src/server/`** — Bun.serve() HTTP API and static file server
 - **`src/client/`** — SolidJS SPA bundled via `build.ts`; components in `components/`, Tailwind CSS v4
-- **`src/shared/`** — shared types (`types.ts`) and WebSocket message schemas (`messages.ts`, valibot)
 - **`src/tools/`** — CLI utilities
 
 ## Code Style

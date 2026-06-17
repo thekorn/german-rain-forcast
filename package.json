@@ -26,14 +26,10 @@
   "dependencies": {
     "@logtape/logtape": "^2.1.5",
     "@solidjs/router": "^0.16.1",
-    "@ws-kit/bun": "^0.10.1",
-    "@ws-kit/client": "^0.10.0",
-    "@ws-kit/valibot": "^0.10.2",
     "bunqueue": "^2.8.20",
     "effect": "^3.21.3",
     "maplibre-gl": "^5.24.0",
-    "solid-js": "^1.9.13",
-    "valibot": "^1.4.1"
+    "solid-js": "^1.9.13"
   },
   "devDependencies": {
     "@babel/core": "^8.0.1",

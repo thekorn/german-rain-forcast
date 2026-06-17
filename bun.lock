@@ -7,14 +7,10 @@
       "dependencies": {
         "@logtape/logtape": "^2.1.5",
         "@solidjs/router": "^0.16.1",
-        "@ws-kit/bun": "^0.10.1",
-        "@ws-kit/client": "^0.10.0",
-        "@ws-kit/valibot": "^0.10.2",
         "bunqueue": "^2.8.20",
         "effect": "^3.21.3",
         "maplibre-gl": "^5.24.0",
         "solid-js": "^1.9.13",
-        "valibot": "^1.4.1",
       },
       "devDependencies": {
         "@babel/core": "^8.0.1",
@@ -470,18 +466,6 @@
 
     "@typescript/native-preview-win32-x64": ["@typescript/native-preview-win32-x64@7.0.0-dev.20260617.2", "", { "os": "win32", "cpu": "x64" }, "sha512-+nSSVVhp17R5KHSQw2uO0CGtTGCb9bUeQ/INcUCycVfO0tguwdyoYiuL8enlVkh059MgZW6LjqIhKXQHkGW+Lw=="],
 
-    "@ws-kit/bun": ["@ws-kit/bun@0.10.1", "", { "peerDependencies": { "@types/bun": ">=1.3.6", "@ws-kit/core": "^0.10.1" } }, "sha512-nWFSkSG541ZfRpC88T8uy36iEPJPf9G0hoCax5P44phaRKRGR2ZmUqSJ73Qy2ETZO7ZLXT1WnpXqWvKshl3QYA=="],
-
-    "@ws-kit/client": ["@ws-kit/client@0.10.0", "", { "peerDependencies": { "@ws-kit/valibot": "^0.10.0", "@ws-kit/zod": "^0.10.0", "valibot": ">=1.2.0", "zod": ">=4.1.13" }, "optionalPeers": ["@ws-kit/valibot", "@ws-kit/zod", "valibot", "zod"] }, "sha512-qkJeUm7KIpNUtFkYQsOHaaSozbkE/wtch+HPQIV+9jPkfZAbXDZD+AGBWMLw/8TtG89U/xuTzBm/HyiV2g9x2w=="],
-
-    "@ws-kit/core": ["@ws-kit/core@0.10.1", "", {}, "sha512-CQa3wbvmUPJoaw/lNMpiHQPimaMaEb72oSfQ88748wIoEQzf8746L0q56TdZr3Mp6XzSMCcxyadNOAP4uXngag=="],
-
-    "@ws-kit/plugins": ["@ws-kit/plugins@0.10.1", "", { "peerDependencies": { "@ws-kit/core": "^0.10.0" } }, "sha512-yYl4+4im+UM3733XnGw2qQGYQ53GOs/TGkHSIhClVLVMU5wZfR2hjNc73NIQMVkMEsVrWrEgPfPsf7sRTyzPgQ=="],
-
-    "@ws-kit/pubsub": ["@ws-kit/pubsub@0.10.2", "", { "peerDependencies": { "@ws-kit/core": "^0.10.1" } }, "sha512-IeItJ2eVEflZo6xP8zLD898sVTwWgVqvEkkExsKW38UYNUjv+tM3WhdKozzWiZwnOZ5eSEKb7xL6y8ESnZSFNQ=="],
-
-    "@ws-kit/valibot": ["@ws-kit/valibot@0.10.2", "", { "dependencies": { "@ws-kit/core": "^0.10.0", "@ws-kit/plugins": "^0.10.1", "@ws-kit/pubsub": "^0.10.1" }, "peerDependencies": { "valibot": ">=1.2.0" } }, "sha512-px+66aJuPeJo5LXhh7CLBX8j83lTwNd8bWG3nJq+aFpDLD9fQyFedSuuMm+1i3MB+YIyTHK5KYG3TcPbD+YAkA=="],
-
     "ansi-regex": ["ansi-regex@6.2.2", "", {}, "sha512-Bq3SmSpyFHaWjPk8If9yc6svM8c56dB5BAtW4Qbw5jHTwwXXcTLoRMkpDJp6VL0XzlWaCHTXrkFURMYmD0sLqg=="],
 
     "ansi-styles": ["ansi-styles@5.2.0", "", {}, "sha512-Cxwpt2SfTzTtXcfOlzGEee8O+c+MmUgGrNiBcXnuWxuFJHe6a5Hz7qwhwe5OgaSYI0IJvkLqWX1ASG+cJOkEiA=="],
@@ -734,8 +718,6 @@
 
     "update-browserslist-db": ["update-browserslist-db@1.2.3", "", { "dependencies": { "escalade": "^3.2.0", "picocolors": "^1.1.1" }, "peerDependencies": { "browserslist": ">= 4.21.0" }, "bin": { "update-browserslist-db": "cli.js" } }, "sha512-Js0m9cx+qOgDxo0eMiFGEueWztz+d4+M3rGlmKPT+T4IS/jP4ylw3Nwpu6cpTTP8R1MAC1kF4VbdLt3ARf209w=="],
 
-    "valibot": ["valibot@1.4.1", "", { "peerDependencies": { "typescript": ">=5" }, "optionalPeers": ["typescript"] }, "sha512-klCmFTz2jeDluy9RwX+F884TCiogtdBJ/YaxSx1EOBYXa3NXNWj8kR1jjN8rzluwojJVWWaHJ4r1U5LfICnM3g=="],
-
     "vscode-languageserver-textdocument": ["vscode-languageserver-textdocument@1.0.12", "", {}, "sha512-cxWNPesCnQCcMPeenjKKsOCKQZ/L6Tv19DTRIGuLWe32lyzWhihGVJ/rcckZXJxfdKCFvRLS3fpBIsV/ZGX4zA=="],
 
     "vscode-uri": ["vscode-uri@3.1.0", "", {}, "sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ=="],
@@ -747,8 +729,6 @@
     "xdg-basedir": ["xdg-basedir@5.1.0", "", {}, "sha512-GCPAHLvrIH13+c0SuacwvRYj2SxJXQ4kaVTT5xgL3kPrz56XxkF21IGhjSE1+W0aw7gpBWRGXLCPnPby6lSpmQ=="],
 
     "yaml": ["yaml@2.9.0", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA=="],
-
-    "zod": ["zod@4.3.6", "", {}, "sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg=="],
 
     "@babel/helper-module-imports/@babel/types": ["@babel/types@7.29.0", "", { "dependencies": { "@babel/helper-string-parser": "^7.27.1", "@babel/helper-validator-identifier": "^7.28.5" } }, "sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A=="],
 

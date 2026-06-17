@@ -72,11 +72,6 @@ const stubRouteProps: RouteSectionProps = {
 };
 
 mock.module('./api.ts', () => ({
-  createConnection: () => {
-    const [error] = createSignal<string | null>(null);
-    const [connected] = createSignal(false);
-    return { error, connected };
-  },
   fetchRainForecast: async () => createForecast(),
 }));
 
