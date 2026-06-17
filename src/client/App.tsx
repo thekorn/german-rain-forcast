@@ -8,7 +8,7 @@ import { ForecastTimelineControls } from './components/ForecastTimelineControls.
 import { GermanyMap } from './components/GermanyMap.tsx';
 import { MapIntroPanel } from './components/MapIntroPanel.tsx';
 
-const PLAYBACK_INTERVAL_MS = 400;
+const PLAYBACK_INTERVAL_MS = 700;
 
 export default function App(_props: RouteSectionProps) {
   const [forecast] = createResource(fetchRainForecast);

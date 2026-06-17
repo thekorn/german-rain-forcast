@@ -166,7 +166,7 @@ describe('App', () => {
       fireEvent.click(playButton);
 
       expect(intervalCalls).toHaveLength(1);
-      expect(intervalCalls[0]?.delay).toBe(400);
+      expect(intervalCalls[0]?.delay).toBe(700);
       expect(clearIntervalCalls).toHaveLength(0);
 
       fireEvent.click(screen.getByRole('button', { name: 'Animation pausieren' }));

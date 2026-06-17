@@ -131,6 +131,7 @@ const MAP_STYLE: StyleSpecification = {
 const FORECAST_SOURCE_ID = 'rain-forecast';
 const FORECAST_CLOUD_LAYER_ID = 'rain-forecast-cloud';
 const FORECAST_CORE_LAYER_ID = 'rain-forecast-core';
+const FORECAST_TRANSITION_MS = 520;
 const EMPTY_FORECAST_GEOJSON: ForecastFeatureCollection = {
   type: 'FeatureCollection',
   features: [],
@@ -146,6 +147,8 @@ export function GermanyMap(props: GermanyMapProps) {
   let map: Map | undefined;
   let mapLoaded = false;
   let latestForecastGeoJson = EMPTY_FORECAST_GEOJSON;
+  let displayedForecastGeoJson = EMPTY_FORECAST_GEOJSON;
+  let forecastTransitionFrame: number | undefined;
 
   onMount(() => {
     if (!mapContainer) return;
@@ -174,6 +177,7 @@ export function GermanyMap(props: GermanyMapProps) {
   });
 
   onCleanup(() => {
+    cancelForecastTransition();
     map?.remove();
     map = undefined;
   });
@@ -287,7 +291,55 @@ export function GermanyMap(props: GermanyMapProps) {
 
     ensureForecastLayers();
     const source = map.getSource(FORECAST_SOURCE_ID) as GeoJSONSource | undefined;
-    source?.setData(latestForecastGeoJson);
+
+    if (!source) return;
+
+    if (shouldSetForecastImmediately(displayedForecastGeoJson, latestForecastGeoJson)) {
+      cancelForecastTransition();
+      displayedForecastGeoJson = latestForecastGeoJson;
+      source.setData(latestForecastGeoJson);
+      return;
+    }
+
+    transitionForecastSource(source, latestForecastGeoJson);
+  }
+
+  function transitionForecastSource(
+    source: GeoJSONSource,
+    targetGeoJson: ForecastFeatureCollection,
+  ) {
+    cancelForecastTransition();
+
+    const startGeoJson = displayedForecastGeoJson;
+    const startedAt = performance.now();
+
+    const updateTransition = (now: number) => {
+      const progress = Math.min((now - startedAt) / FORECAST_TRANSITION_MS, 1);
+      displayedForecastGeoJson = interpolateForecastGeoJson(
+        startGeoJson,
+        targetGeoJson,
+        easeInOutCubic(progress),
+      );
+      source.setData(displayedForecastGeoJson);
+
+      if (progress < 1) {
+        forecastTransitionFrame = requestAnimationFrame(updateTransition);
+        return;
+      }
+
+      forecastTransitionFrame = undefined;
+      displayedForecastGeoJson = targetGeoJson;
+      source.setData(targetGeoJson);
+    };
+
+    forecastTransitionFrame = requestAnimationFrame(updateTransition);
+  }
+
+  function cancelForecastTransition() {
+    if (forecastTransitionFrame === undefined) return;
+
+    cancelAnimationFrame(forecastTransitionFrame);
+    forecastTransitionFrame = undefined;
   }
 }
 
@@ -306,4 +358,53 @@ function toForecastGeoJson(
   }
 
   return rainForecastToGeoJson(forecast, selectedTimeIndex);
+}
+
+function shouldSetForecastImmediately(
+  currentGeoJson: ForecastFeatureCollection,
+  targetGeoJson: ForecastFeatureCollection,
+): boolean {
+  return (
+    currentGeoJson.features.length === 0 ||
+    targetGeoJson.features.length === 0 ||
+    currentGeoJson.features.length !== targetGeoJson.features.length ||
+    currentGeoJson.features[0]?.properties.time === targetGeoJson.features[0]?.properties.time
+  );
+}
+
+function interpolateForecastGeoJson(
+  startGeoJson: ForecastFeatureCollection,
+  targetGeoJson: ForecastFeatureCollection,
+  fraction: number,
+): ForecastFeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features: targetGeoJson.features.map((targetFeature, index) => {
+      const startFeature = startGeoJson.features[index];
+
+      if (!startFeature) return targetFeature;
+
+      return {
+        ...targetFeature,
+        properties: {
+          ...targetFeature.properties,
+          precipitation: interpolateNumber(
+            startFeature.properties.precipitation,
+            targetFeature.properties.precipitation,
+            fraction,
+          ),
+        },
+      };
+    }),
+  };
+}
+
+function interpolateNumber(start: number, end: number, fraction: number): number {
+  return start + (end - start) * fraction;
+}
+
+function easeInOutCubic(fraction: number): number {
+  return fraction < 0.5
+    ? 4 * fraction * fraction * fraction
+    : 1 - Math.pow(-2 * fraction + 2, 3) / 2;
 }
