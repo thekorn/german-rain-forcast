@@ -1,5 +1,5 @@
-IMAGE_NAME := sample-project
-CONTAINER_NAME := sample-project
+IMAGE_NAME := german-rain-forecast
+CONTAINER_NAME := german-rain-forecast
 PORT := 3000
 
 .PHONY: build start stop clean

@@ -1,4 +1,4 @@
-# sample project
+# German Rain Forecast
 
 ## Overview
 

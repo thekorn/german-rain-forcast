@@ -4,7 +4,7 @@ import { createBunHandler } from '@ws-kit/bun';
 import { getLogger } from '@logtape/logtape';
 import { Message } from '../shared/messages.ts';
 
-const logger = getLogger(['sample-project', 'ws']);
+const logger = getLogger(['german-rain-forecast', 'ws']);
 
 const router = createRouter();
 

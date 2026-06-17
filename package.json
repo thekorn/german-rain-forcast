@@ -1,5 +1,5 @@
 {
-  "name": "sample-project",
+  "name": "german-rain-forecast",
   "private": true,
   "type": "module",
   "module": "index.ts",

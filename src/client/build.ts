@@ -5,12 +5,12 @@ import { cpSync, mkdirSync, watch } from 'node:fs';
 await configure({
   sinks: { console: getConsoleSink({ formatter: ansiColorFormatter }) },
   loggers: [
-    { category: ['sample-project', 'build'], sinks: ['console'], lowestLevel: 'debug' },
+    { category: ['german-rain-forecast', 'build'], sinks: ['console'], lowestLevel: 'debug' },
     { category: ['logtape', 'meta'], lowestLevel: 'warning', sinks: ['console'] },
   ],
 });
 
-const logger = getLogger(['sample-project', 'build']);
+const logger = getLogger(['german-rain-forecast', 'build']);
 
 const solidPlugin: import('bun').BunPlugin = {
   name: 'solid-jsx',

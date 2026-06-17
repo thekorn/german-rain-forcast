@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "sample-project",
+      "name": "german-rain-forecast",
       "dependencies": {
         "@logtape/logtape": "^2.1.5",
         "@solidjs/router": "^0.16.1",

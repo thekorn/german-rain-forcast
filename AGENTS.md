@@ -1,4 +1,4 @@
-# Agent Guidelines for sample-project
+# Agent Guidelines for German Rain Forecast
 
 ## Build/Test Commands
 

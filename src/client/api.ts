@@ -3,7 +3,7 @@ import { wsClient } from '@ws-kit/client/valibot';
 import { createSignal } from 'solid-js';
 import { ErrorMessage, Message } from '../shared/messages.ts';
 
-const logger = getLogger(['sample-project', 'api']);
+const logger = getLogger(['german-rain-forecast', 'api']);
 
 export function createConnection() {
   const [error, setError] = createSignal<string | null>(null);
