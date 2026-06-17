@@ -8,7 +8,7 @@ const SUCCESS_CACHE_CONTROL = 'public, max-age=60, stale-while-revalidate=300';
 const STALE_CACHE_CONTROL = 'no-cache';
 const ERROR_CACHE_CONTROL = 'no-store';
 
-interface RainForecastResponse {
+export interface RainForecastResponse {
   model: 'dwd-icon';
   timezone: 'Europe/Berlin';
   times: string[];
@@ -21,14 +21,13 @@ interface RainForecastResponse {
   refresh: ForecastCacheSnapshot['refresh'];
 }
 
-type ForecastProvider = Pick<ForecastCacheService, 'getForecast'>;
+export type ForecastProvider = Pick<ForecastCacheService, 'getForecast'>;
 
 export async function handleRainForecastApiRequest(
   provider: ForecastProvider = forecastCache,
 ): Promise<Response> {
   try {
-    const snapshot = await provider.getForecast();
-    const response = toRainForecastResponse(snapshot);
+    const response = await getRainForecastResponse(provider);
 
     return Response.json(response, {
       headers: {
@@ -55,6 +54,14 @@ export async function handleRainForecastApiRequest(
       },
     );
   }
+}
+
+export async function getRainForecastResponse(
+  provider: ForecastProvider = forecastCache,
+): Promise<RainForecastResponse> {
+  const snapshot = await provider.getForecast();
+
+  return toRainForecastResponse(snapshot);
 }
 
 function shouldRevalidateResponse(status: ForecastCacheSnapshot['refresh']['status']): boolean {

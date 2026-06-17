@@ -120,7 +120,11 @@ function interpolateForecastGrid(features: ForecastPointFeature[]): ForecastPoin
         const latitudeFraction = latitudeStep / GRID_CELL_INTERPOLATION_STEPS;
         const latitude = interpolateNumber(southLatitude, northLatitude, latitudeFraction);
 
-        for (let longitudeStep = 0; longitudeStep <= GRID_CELL_INTERPOLATION_STEPS; longitudeStep += 1) {
+        for (
+          let longitudeStep = 0;
+          longitudeStep <= GRID_CELL_INTERPOLATION_STEPS;
+          longitudeStep += 1
+        ) {
           const longitudeFraction = longitudeStep / GRID_CELL_INTERPOLATION_STEPS;
           const longitude = interpolateNumber(westLongitude, eastLongitude, longitudeFraction);
           const key = toCoordinateKey(latitude, longitude);

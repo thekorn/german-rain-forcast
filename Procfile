@@ -1,3 +1,3 @@
 client: bun run dev:web
 css: bun run dev:css
-server: bun run dev:server
+server: bun run dev:server -- --ssr

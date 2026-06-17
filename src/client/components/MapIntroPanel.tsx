@@ -14,8 +14,7 @@ export function MapIntroPanel(props: MapIntroPanelProps) {
         Regenradar für Deutschland
       </h2>
       <p class="mt-2 text-sm leading-6 font-medium text-slate-700">
-        Stündliche Niederschlagsprognose aus dem DWD-ICON-Modell, als Live-Karte aus
-        zwischengespeicherten Serverdaten dargestellt.
+        Stündliche Niederschlagsprognose aus dem DWD-ICON-Modell.
       </p>
       <p class="mt-4 border-t-4 border-[#072f6b] bg-[#f4f6f8] px-3 py-2 text-sm font-bold text-[#041d42]">
         {statusMessage(props)}
