@@ -91,7 +91,10 @@ describe('App', () => {
 
   test('renders the Germany map shell', () => {
     render(() => <App {...stubRouteProps} />);
-    expect(screen.getByRole('region', { name: 'Map of Germany' })).toBeInTheDocument();
+    const mapRegion = screen.getByRole('region', { name: 'Map of Germany' });
+
+    expect(mapRegion).toBeInTheDocument();
+    expect(mapRegion).toHaveClass('absolute', 'inset-0');
     expect(screen.getByRole('heading', { name: 'DWD ICON precipitation map' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Rain intensity' })).toBeInTheDocument();
     expect(screen.getByText('Playback soon')).toBeInTheDocument();
@@ -110,6 +113,8 @@ describe('App', () => {
       [5.5, 47],
       [15.6, 55.2],
     ]);
+    expect(map?.options.container).toHaveClass('h-full', 'w-full');
+    expect(map?.options.container).not.toBe(screen.getByRole('region', { name: 'Map of Germany' }));
 
     unmount();
     expect(map?.removed).toBe(true);

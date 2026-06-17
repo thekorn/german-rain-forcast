@@ -1,5 +1,9 @@
 import { describe, expect, test } from 'bun:test';
-import { rainForecastToGeoJson, type RainForecastResponse } from './forecast.ts';
+import {
+  getWettestForecastTimeIndex,
+  rainForecastToGeoJson,
+  type RainForecastResponse,
+} from './forecast.ts';
 
 describe('rainForecastToGeoJson', () => {
   test('maps the selected timestep precipitation values to GeoJSON point features', () => {
@@ -52,6 +56,18 @@ describe('rainForecastToGeoJson', () => {
         0,
       ),
     ).toThrow('Forecast grid point and precipitation arrays are mismatched');
+  });
+});
+
+describe('getWettestForecastTimeIndex', () => {
+  test('returns the timestep with the highest total precipitation', () => {
+    expect(getWettestForecastTimeIndex(createForecast())).toBe(1);
+  });
+
+  test('falls back to the first timestep when there are no forecast times', () => {
+    expect(getWettestForecastTimeIndex({ ...createForecast(), times: [], precipitation: [] })).toBe(
+      0,
+    );
   });
 });
 

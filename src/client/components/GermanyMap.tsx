@@ -64,14 +64,14 @@ export function GermanyMap(props: GermanyMapProps) {
   });
 
   return (
-    <div
-      ref={(element) => {
-        mapContainer = element;
-      }}
-      aria-label="Map of Germany"
-      class="absolute inset-0"
-      role="region"
-    />
+    <div aria-label="Map of Germany" class="absolute inset-0" role="region">
+      <div
+        ref={(element) => {
+          mapContainer = element;
+        }}
+        class="h-full w-full"
+      />
+    </div>
   );
 
   function ensureForecastLayers() {
@@ -126,7 +126,7 @@ export function GermanyMap(props: GermanyMapProps) {
       id: FORECAST_CIRCLE_LAYER_ID,
       type: 'circle',
       source: FORECAST_SOURCE_ID,
-      minzoom: 6,
+      minzoom: 4,
       filter: ['>', ['get', 'precipitation'], 0],
       paint: {
         'circle-radius': [
@@ -134,13 +134,13 @@ export function GermanyMap(props: GermanyMapProps) {
           ['linear'],
           ['get', 'precipitation'],
           0,
-          2,
+          4,
           1,
+          8,
           5,
-          5,
-          10,
+          16,
           15,
-          17,
+          26,
         ],
         'circle-color': [
           'interpolate',
@@ -157,9 +157,9 @@ export function GermanyMap(props: GermanyMapProps) {
           15,
           '#e11d48',
         ],
-        'circle-opacity': 0.78,
+        'circle-opacity': 0.85,
         'circle-stroke-color': '#ffffff',
-        'circle-stroke-opacity': 0.35,
+        'circle-stroke-opacity': 0.75,
         'circle-stroke-width': 1,
       },
     });

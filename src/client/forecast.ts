@@ -85,3 +85,19 @@ export function rainForecastToGeoJson(
     }),
   };
 }
+
+export function getWettestForecastTimeIndex(forecast: RainForecastResponse): number {
+  let wettestIndex = 0;
+  let wettestTotal = -Infinity;
+
+  for (let timeIndex = 0; timeIndex < forecast.times.length; timeIndex += 1) {
+    const total = forecast.precipitation.reduce((sum, values) => sum + (values[timeIndex] ?? 0), 0);
+
+    if (total > wettestTotal) {
+      wettestTotal = total;
+      wettestIndex = timeIndex;
+    }
+  }
+
+  return wettestIndex;
+}
