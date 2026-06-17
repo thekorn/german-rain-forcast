@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { getLogger } from '@logtape/logtape';
 import { PORT } from './env.ts';
 import { forecastCache } from './forecast-cache.ts';
+import { handleRainForecastApiRequest } from './rain-forecast-api.ts';
 import { wsFetch, websocket } from './ws.ts';
 
 const logger = getLogger(['german-rain-forecast', 'server']);
@@ -18,6 +19,19 @@ Bun.serve({
 
     if (url.pathname === '/ws') {
       return wsFetch(req, server);
+    }
+
+    if (url.pathname === '/api/rain-forecast') {
+      if (req.method !== 'GET') {
+        return new Response('Method not allowed', {
+          status: 405,
+          headers: {
+            Allow: 'GET',
+          },
+        });
+      }
+
+      return handleRainForecastApiRequest();
     }
 
     const staticPath = url.pathname === '/' ? '/index.html' : url.pathname;
