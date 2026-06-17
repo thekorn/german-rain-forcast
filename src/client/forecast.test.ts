@@ -1,5 +1,8 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  getInitialForecastTimeIndex,
+  getNextForecastTimeIndex,
+  getPlayableForecastTimeIndices,
   getWettestForecastTimeIndex,
   rainForecastToGeoJson,
   type RainForecastResponse,
@@ -68,6 +71,28 @@ describe('getWettestForecastTimeIndex', () => {
     expect(getWettestForecastTimeIndex({ ...createForecast(), times: [], precipitation: [] })).toBe(
       0,
     );
+  });
+});
+
+describe('forecast timestep selection', () => {
+  const times = ['2026-06-17T09:00:00', '2026-06-17T10:00:00', '2026-06-17T11:00:00'];
+
+  test('initializes to the nearest current or future Berlin timestep', () => {
+    expect(getInitialForecastTimeIndex(times, new Date('2026-06-17T07:30:00Z'))).toBe(1);
+  });
+
+  test('falls back to the last timestep when all forecast times are past', () => {
+    expect(getInitialForecastTimeIndex(times, new Date('2026-06-17T12:00:00Z'))).toBe(2);
+    expect(getInitialForecastTimeIndex([], new Date('2026-06-17T12:00:00Z'))).toBe(0);
+  });
+
+  test('plays only current and future timesteps and loops at the end', () => {
+    const now = new Date('2026-06-17T07:30:00Z');
+
+    expect(getPlayableForecastTimeIndices(times, now)).toEqual([1, 2]);
+    expect(getNextForecastTimeIndex(times, 0, now)).toBe(1);
+    expect(getNextForecastTimeIndex(times, 1, now)).toBe(2);
+    expect(getNextForecastTimeIndex(times, 2, now)).toBe(1);
   });
 });
 

@@ -1,22 +1,30 @@
 interface ForecastTimelineControlsProps {
   times: string[];
   selectedTimeIndex: number;
+  isPlaying: boolean;
   onSelectTime: (index: number) => void;
+  onTogglePlayback: () => void;
 }
 
 export function ForecastTimelineControls(props: ForecastTimelineControlsProps) {
   const hasTimes = () => props.times.length > 0;
+  const canPlay = () => props.times.length > 1;
   const selectedTime = () => props.times[props.selectedTimeIndex];
+  const playbackLabel = () =>
+    props.isPlaying ? 'Pause forecast playback' : 'Play forecast playback';
 
   return (
     <section class="absolute inset-x-4 bottom-4 rounded-3xl bg-slate-950/85 p-4 shadow-2xl ring-1 ring-white/15 backdrop-blur">
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <button
-          class="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/20"
-          disabled
+          aria-label={playbackLabel()}
+          aria-pressed={props.isPlaying}
+          class="rounded-full bg-sky-300 px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg ring-1 shadow-sky-950/30 ring-white/25 transition hover:bg-sky-200 focus:ring-2 focus:ring-sky-100 focus:outline-none disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-slate-400"
+          disabled={!canPlay()}
           type="button"
+          onClick={props.onTogglePlayback}
         >
-          Playback soon
+          {props.isPlaying ? 'Pause' : 'Play'}
         </button>
         <label class="sr-only" for="forecast-time">
           Forecast timestep
@@ -40,17 +48,29 @@ export function ForecastTimelineControls(props: ForecastTimelineControlsProps) {
 }
 
 function formatForecastTime(value: string): string {
-  const date = new Date(value);
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(value);
+
+  if (!match) {
+    return value;
+  }
+
+  const [, year, month, day, hour, minute] = match;
+  const date = new Date(
+    Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute)),
+  );
 
   if (Number.isNaN(date.getTime())) {
     return value;
   }
 
-  return new Intl.DateTimeFormat('en-GB', {
-    weekday: 'short',
-    day: '2-digit',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date);
+  return (
+    new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'UTC',
+      weekday: 'short',
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date) + ' Europe/Berlin'
+  );
 }

@@ -101,3 +101,61 @@ export function getWettestForecastTimeIndex(forecast: RainForecastResponse): num
 
   return wettestIndex;
 }
+
+export function getInitialForecastTimeIndex(times: string[], now = new Date()): number {
+  if (times.length === 0) return 0;
+
+  const nowKey = toBerlinTimeKey(now);
+  const futureIndex = times.findIndex((time) => toForecastTimeKey(time) >= nowKey);
+
+  return futureIndex === -1 ? times.length - 1 : futureIndex;
+}
+
+export function getPlayableForecastTimeIndices(times: string[], now = new Date()): number[] {
+  const nowKey = toBerlinTimeKey(now);
+  const indices = times
+    .map((time, index) => ({ index, key: toForecastTimeKey(time) }))
+    .filter(({ key }) => key >= nowKey)
+    .map(({ index }) => index);
+
+  return indices.length > 0 ? indices : times.map((_, index) => index);
+}
+
+export function getNextForecastTimeIndex(
+  times: string[],
+  selectedTimeIndex: number,
+  now = new Date(),
+): number {
+  const playableIndices = getPlayableForecastTimeIndices(times, now);
+
+  if (playableIndices.length === 0) return 0;
+
+  const selectedPlayableIndex = playableIndices.indexOf(selectedTimeIndex);
+
+  if (selectedPlayableIndex === -1) {
+    return playableIndices[0] ?? 0;
+  }
+
+  return playableIndices[(selectedPlayableIndex + 1) % playableIndices.length] ?? 0;
+}
+
+function toForecastTimeKey(value: string): string {
+  return value.slice(0, 19);
+}
+
+function toBerlinTimeKey(date: Date): string {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Berlin',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(date);
+
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+
+  return `${values.year}-${values.month}-${values.day}T${values.hour}:${values.minute}:${values.second}`;
+}
