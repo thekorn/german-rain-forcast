@@ -2,11 +2,12 @@ import type { RouteSectionProps } from '@solidjs/router';
 import { beforeEach, describe, expect, mock, test } from 'bun:test';
 import { createSignal } from 'solid-js';
 import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library';
+import type { StyleSpecification } from 'maplibre-gl';
 import type { ForecastFeatureCollection, RainForecastResponse } from './forecast.ts';
 
 type MapOptions = {
   container: HTMLElement;
-  style: string;
+  style: StyleSpecification;
   center: [number, number];
   zoom: number;
   minZoom: number;
@@ -25,6 +26,7 @@ class MockMap {
   removed = false;
   sources = new Map<string, MockGeoJsonSource>();
   layers: unknown[] = [];
+  fitBoundsCalls: unknown[] = [];
 
   constructor(readonly options: MapOptions) {
     mapInstances.push(this);
@@ -51,6 +53,10 @@ class MockMap {
 
   addLayer(layer: unknown) {
     this.layers.push(layer);
+  }
+
+  fitBounds(bounds: unknown, options: unknown) {
+    this.fitBoundsCalls.push({ bounds, options });
   }
 
   remove() {
@@ -131,13 +137,30 @@ describe('App', () => {
     expect(mapInstances).toHaveLength(1);
 
     const [map] = mapInstances;
-    expect(map?.options.style).toBe('https://tiles.openfreemap.org/styles/liberty');
+    expect(map?.options.style.layers.map((layer) => layer.id)).toEqual([
+      'background',
+      'water',
+      'major-rivers',
+      'country-outline',
+      'state-outline',
+      'city-labels',
+      'country-labels',
+    ]);
     expect(map?.options.center).toEqual([10.45, 51.16]);
-    expect(map?.options.zoom).toBe(5.4);
-    expect(map?.options.minZoom).toBe(4);
+    expect(map?.options.zoom).toBe(4.6);
+    expect(map?.options.minZoom).toBe(3.8);
     expect(map?.options.maxBounds).toEqual([
-      [5.5, 47],
-      [15.6, 55.2],
+      [-2, 43],
+      [23, 58],
+    ]);
+    expect(map?.fitBoundsCalls).toEqual([
+      {
+        bounds: [
+          [4.2, 46.8],
+          [16.2, 55.4],
+        ],
+        options: { duration: 0, padding: 72 },
+      },
     ]);
     expect(map?.options.container).toHaveClass('h-full', 'w-full');
     expect(map?.options.container).not.toBe(screen.getByRole('region', { name: 'Map of Germany' }));
