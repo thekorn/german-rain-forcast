@@ -2,14 +2,23 @@ import './logging.ts';
 import { join } from 'node:path';
 import { getLogger } from '@logtape/logtape';
 import { PORT } from './env.ts';
-import { forecastCache } from './forecast-cache.ts';
+import { createFakeRainForecastCache, forecastCache } from './forecast-cache.ts';
 import { handleRainForecastApiRequest } from './rain-forecast-api.ts';
 
 const logger = getLogger(['german-rain-forecast', 'server']);
 
 const PUBLIC_DIR = join(import.meta.dir, '../../dist/public');
+const FAKE_DATA_FLAG = '--fake-data';
+const forecastProvider = Bun.argv.includes(FAKE_DATA_FLAG)
+  ? createFakeRainForecastCache()
+  : forecastCache;
 
 logger.debug('Public dir: {dir}', { dir: PUBLIC_DIR });
+if (Bun.argv.includes(FAKE_DATA_FLAG)) {
+  logger.warn('Using fake rain forecast data from command line flag {flag}', {
+    flag: FAKE_DATA_FLAG,
+  });
+}
 
 Bun.serve({
   port: PORT,
@@ -26,7 +35,7 @@ Bun.serve({
         });
       }
 
-      return handleRainForecastApiRequest();
+      return handleRainForecastApiRequest(forecastProvider);
     }
 
     const staticPath = url.pathname === '/' ? '/index.html' : url.pathname;
@@ -46,7 +55,7 @@ Bun.serve({
 });
 logger.info('Server running on http://localhost:{port}', { port: PORT });
 
-forecastCache.startBackgroundRefresh({
+forecastProvider.startBackgroundRefresh({
   onError(error) {
     logger.error('Forecast cache refresh failed: {error}', {
       error: error instanceof Error ? error.message : String(error),

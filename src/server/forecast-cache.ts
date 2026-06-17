@@ -1,6 +1,8 @@
 const DWD_ICON_ENDPOINT = 'https://api.open-meteo.com/v1/dwd-icon';
 const DEFAULT_TTL_MS = 60 * 60 * 1000;
 const DEFAULT_BATCH_SIZE = 25;
+const FAKE_FORECAST_TIMESTEPS = 48;
+const FAKE_RAIN_DURATION = 10;
 
 export type ForecastRefreshStatus = 'empty' | 'fresh' | 'stale' | 'refreshing' | 'error';
 
@@ -28,14 +30,17 @@ export interface ForecastCacheSnapshot {
 
 type Fetcher = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 type Now = () => number;
+type Random = () => number;
 
 interface ForecastCacheServiceOptions {
   fetcher?: Fetcher;
   now?: Now;
+  random?: Random;
   ttlMs?: number;
   batchSize?: number;
   gridPoints?: ForecastGridPoint[];
   endpoint?: string;
+  fakeData?: boolean;
 }
 
 interface CachedForecast {
@@ -64,10 +69,12 @@ interface OpenMeteoForecast {
 export class ForecastCacheService {
   private readonly fetcher: Fetcher;
   private readonly now: Now;
+  private readonly random: Random;
   private readonly ttlMs: number;
   private readonly batchSize: number;
   private readonly gridPoints: ForecastGridPoint[];
   private readonly endpoint: string;
+  private readonly fakeData: boolean;
   private cache?: CachedForecast;
   private refreshPromise?: Promise<ForecastCacheSnapshot>;
   private refreshState: RefreshState = { status: 'empty' };
@@ -81,10 +88,12 @@ export class ForecastCacheService {
 
     this.fetcher = options.fetcher ?? fetch;
     this.now = options.now ?? Date.now;
+    this.random = options.random ?? Math.random;
     this.ttlMs = ttlMs;
     this.batchSize = batchSize;
     this.gridPoints = options.gridPoints ?? generateGermanyForecastGrid();
     this.endpoint = options.endpoint ?? DWD_ICON_ENDPOINT;
+    this.fakeData = options.fakeData ?? false;
   }
 
   async getForecast(): Promise<ForecastCacheSnapshot> {
@@ -176,6 +185,10 @@ export class ForecastCacheService {
   }
 
   private async fetchForecast(): Promise<Omit<CachedForecast, 'updatedAtMs'>> {
+    if (this.fakeData) {
+      return createFakeRainForecast(this.gridPoints, this.now(), this.random);
+    }
+
     const results: OpenMeteoForecast[] = [];
 
     for (const batch of chunk(this.gridPoints, this.batchSize)) {
@@ -271,6 +284,56 @@ export function generateGermanyForecastGrid(step = 1): ForecastGridPoint[] {
 
 export const forecastCache = new ForecastCacheService();
 
+export function createFakeRainForecastCache(): ForecastCacheService {
+  return new ForecastCacheService({ fakeData: true });
+}
+
+function createFakeRainForecast(
+  gridPoints: ForecastGridPoint[],
+  nowMs: number,
+  random: Random,
+): Omit<CachedForecast, 'updatedAtMs'> {
+  const start = new Date(nowMs);
+  start.setMinutes(0, 0, 0);
+  start.setHours(start.getHours() + 1);
+
+  const times = Array.from({ length: FAKE_FORECAST_TIMESTEPS }, (_, index) => {
+    const time = new Date(start.getTime());
+    time.setHours(start.getHours() + index);
+    return formatLocalDateTime(time);
+  });
+
+  const rainyStartIndex = Math.floor(random() * (FAKE_FORECAST_TIMESTEPS - FAKE_RAIN_DURATION + 1));
+  const stormCenterLatitude = 47 + random() * 8;
+  const stormCenterLongitude = 6 + random() * 9;
+  const peakPrecipitation = 18 + random() * 18;
+  const stormPeakIndex = rainyStartIndex + FAKE_RAIN_DURATION / 2;
+
+  return {
+    times,
+    gridPoints,
+    precipitation: gridPoints.map((point) =>
+      times.map((_, timeIndex) => {
+        if (timeIndex < rainyStartIndex || timeIndex >= rainyStartIndex + FAKE_RAIN_DURATION) {
+          return roundPrecipitation(random() * 0.35);
+        }
+
+        const temporalDistance = Math.abs(timeIndex - stormPeakIndex) / (FAKE_RAIN_DURATION / 2);
+        const temporalIntensity = Math.max(0, 1 - temporalDistance);
+        const spatialDistance = Math.hypot(
+          (point.latitude - stormCenterLatitude) / 3,
+          (point.longitude - stormCenterLongitude) / 3,
+        );
+        const spatialIntensity = Math.max(0.2, 1 - spatialDistance * 0.45);
+
+        return roundPrecipitation(
+          2 + peakPrecipitation * temporalIntensity * spatialIntensity + random() * 4,
+        );
+      }),
+    ),
+  };
+}
+
 function normalizeForecast(forecast: OpenMeteoForecast): {
   gridPoint: ForecastGridPoint;
   times: string[];
@@ -351,6 +414,10 @@ function formatCoordinate(value: number): string {
 
 function roundCoordinate(value: number): number {
   return Number(value.toFixed(4));
+}
+
+function roundPrecipitation(value: number): number {
+  return Number(value.toFixed(1));
 }
 
 function assertPositiveFiniteNumber(value: number, name: string): void {

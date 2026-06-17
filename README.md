@@ -43,6 +43,12 @@ This uses [shoreman](https://www.chrismytton.com/shoreman/) to run the services 
 - **css** — Tailwind CSS compiler in watch mode (`bun run dev:css`)
 - **server** — Bun server with hot reload (`bun run dev:server`)
 
+To run the backend with generated fake data for a random very rainy period:
+
+```bash
+bun run dev:server -- --fake-data
+```
+
 ## Build & Production
 
 ```bash

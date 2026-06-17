@@ -74,6 +74,35 @@ describe('ForecastCacheService', () => {
     expect(requests[1]?.searchParams.get('latitude')).toBe('49');
   });
 
+  test('generates fake very rainy forecast data without calling upstream', async () => {
+    const service = new ForecastCacheService({
+      fakeData: true,
+      fetcher: async () => {
+        throw new Error('unexpected upstream request');
+      },
+      gridPoints: [
+        { latitude: 51, longitude: 10 },
+        { latitude: 52, longitude: 11 },
+      ],
+      now: () => Date.UTC(2026, 5, 17, 8, 20),
+      random: () => 0.5,
+      ttlMs: 60 * 60 * 1000,
+    });
+
+    const snapshot = await service.getForecast();
+    const maxPrecipitation = Math.max(...snapshot.precipitation.flat());
+
+    expect(snapshot.times).toHaveLength(48);
+    expect(snapshot.times[0]).toBe('2026-06-17T09:00:00');
+    expect(snapshot.gridPoints).toEqual([
+      { latitude: 51, longitude: 10 },
+      { latitude: 52, longitude: 11 },
+    ]);
+    expect(snapshot.precipitation).toHaveLength(2);
+    expect(snapshot.precipitation[0]).toHaveLength(48);
+    expect(maxPrecipitation).toBeGreaterThan(15);
+  });
+
   test('rejects invalid cache options', () => {
     expect(() => new ForecastCacheService({ ttlMs: 0 })).toThrow(
       'ttlMs must be a positive finite number',
