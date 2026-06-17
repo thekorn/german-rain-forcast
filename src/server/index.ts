@@ -4,7 +4,6 @@ import { getLogger } from '@logtape/logtape';
 import { PORT } from './env.ts';
 import { forecastCache } from './forecast-cache.ts';
 import { handleRainForecastApiRequest } from './rain-forecast-api.ts';
-import { wsFetch, websocket } from './ws.ts';
 
 const logger = getLogger(['german-rain-forecast', 'server']);
 
@@ -14,12 +13,8 @@ logger.debug('Public dir: {dir}', { dir: PUBLIC_DIR });
 
 Bun.serve({
   port: PORT,
-  async fetch(req, server) {
+  async fetch(req) {
     const url = new URL(req.url);
-
-    if (url.pathname === '/ws') {
-      return wsFetch(req, server);
-    }
 
     if (url.pathname === '/api/rain-forecast') {
       if (req.method !== 'GET') {
@@ -48,7 +43,6 @@ Bun.serve({
 
     return new Response('Not found', { status: 404 });
   },
-  websocket,
 });
 logger.info('Server running on http://localhost:{port}', { port: PORT });
 

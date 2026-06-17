@@ -6,8 +6,7 @@
 
 - **Runtime**: [Bun](https://bun.sh)
 - **Frontend**: [SolidJS](https://www.solidjs.com/) + [Tailwind CSS](https://tailwindcss.com/)
-- **Backend**: `Bun.serve()` with WebSocket support
-- **Real-time communication**: [ws-kit](https://github.com/nicksrandall/ws-kit) (WebSocket message routing with [Valibot](https://valibot.dev/) schemas)
+- **Backend**: `Bun.serve()` HTTP API and static file serving
 - **Linting/Formatting**: [oxlint](https://oxc.rs/) + [oxfmt](https://oxc.rs/)
 - **Type checking**: [tsgo](https://github.com/microsoft/typescript-go) (native TypeScript checker)
 
