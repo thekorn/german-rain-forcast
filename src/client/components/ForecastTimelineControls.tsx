@@ -18,12 +18,23 @@ export function ForecastTimelineControls(props: ForecastTimelineControlsProps) {
         <button
           aria-label={playbackLabel()}
           aria-pressed={props.isPlaying}
-          class="bg-[#e30613] px-5 py-2 text-sm font-black tracking-[0.08em] text-white uppercase shadow-lg shadow-red-950/20 transition hover:bg-[#c7000b] focus:ring-2 focus:ring-[#072f6b] focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"
+          class="flex min-w-14 items-center justify-center bg-[#e30613] px-5 py-2 text-sm font-black tracking-[0.08em] text-white uppercase shadow-lg shadow-red-950/20 transition hover:bg-[#c7000b] focus:ring-2 focus:ring-[#072f6b] focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"
           disabled={!canPlay()}
           type="button"
           onClick={props.onTogglePlayback}
         >
-          {props.isPlaying ? 'Pause' : 'Abspielen'}
+          <svg
+            aria-hidden="true"
+            class="h-7 w-7"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            {props.isPlaying ? (
+              <path d="M7.5 5.5h3.5v13h-3.5zM13 5.5h3.5v13H13z" />
+            ) : (
+              <path d="M8.75 5.5v13l10.5-6.5z" />
+            )}
+          </svg>
         </button>
         <label class="sr-only" for="forecast-time">
           Prognosezeitpunkt
