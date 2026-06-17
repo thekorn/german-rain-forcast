@@ -1,4 +1,3 @@
-import type { RouteSectionProps } from '@solidjs/router';
 import { createEffect, createMemo, createResource, createSignal, onCleanup } from 'solid-js';
 import { fetchRainForecast } from './api.ts';
 import { getInitialForecastTimeIndex, getNextForecastTimeIndex } from './forecast.ts';
@@ -10,7 +9,7 @@ import { MapIntroPanel } from './components/MapIntroPanel.tsx';
 
 const PLAYBACK_INTERVAL_MS = 700;
 
-export default function App(_props: RouteSectionProps) {
+export default function App() {
   const [forecast] = createResource(fetchRainForecast);
   const [selectedTimeIndex, setSelectedTimeIndex] = createSignal(0);
   const [isPlaying, setIsPlaying] = createSignal(false);
