@@ -132,6 +132,27 @@ describe('App', () => {
     expect(mapInstances).toHaveLength(1);
     expect(map?.layers).toHaveLength(2);
   });
+
+  test('renders an empty forecast overlay for empty data or an out-of-range timestep', async () => {
+    const [timeIndex, setTimeIndex] = createSignal(0);
+    const [forecast, setForecast] = createSignal<RainForecastResponse | undefined>(
+      createEmptyForecast(),
+    );
+
+    render(() => <GermanyMap forecast={forecast()} selectedTimeIndex={timeIndex()} />);
+    expect(mapInstances).toHaveLength(1);
+
+    const [map] = mapInstances;
+    expect(map?.getSource('rain-forecast')?.data.features).toHaveLength(0);
+
+    setForecast(createForecast());
+    setTimeIndex(99);
+
+    await waitFor(() => {
+      expect(map?.getSource('rain-forecast')?.data.features).toHaveLength(0);
+    });
+    expect(mapInstances).toHaveLength(1);
+  });
 });
 
 function createForecast(): RainForecastResponse {
@@ -151,6 +172,18 @@ function createForecast(): RainForecastResponse {
     },
     refresh: {
       status: 'fresh',
+    },
+  };
+}
+
+function createEmptyForecast(): RainForecastResponse {
+  return {
+    ...createForecast(),
+    times: [],
+    gridPoints: [],
+    precipitation: [],
+    refresh: {
+      status: 'empty',
     },
   };
 }

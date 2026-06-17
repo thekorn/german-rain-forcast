@@ -54,10 +54,7 @@ export function GermanyMap(props: GermanyMapProps) {
   });
 
   createEffect(() => {
-    const forecast = props.forecast;
-    latestForecastGeoJson = forecast
-      ? rainForecastToGeoJson(forecast, props.selectedTimeIndex)
-      : EMPTY_FORECAST_GEOJSON;
+    latestForecastGeoJson = toForecastGeoJson(props.forecast, props.selectedTimeIndex);
     updateForecastSource();
   });
 
@@ -175,4 +172,21 @@ export function GermanyMap(props: GermanyMapProps) {
     const source = map.getSource(FORECAST_SOURCE_ID) as GeoJSONSource | undefined;
     source?.setData(latestForecastGeoJson);
   }
+}
+
+function toForecastGeoJson(
+  forecast: RainForecastResponse | undefined,
+  selectedTimeIndex: number,
+): ForecastFeatureCollection {
+  if (
+    !forecast ||
+    forecast.times.length === 0 ||
+    forecast.gridPoints.length === 0 ||
+    selectedTimeIndex < 0 ||
+    selectedTimeIndex >= forecast.times.length
+  ) {
+    return EMPTY_FORECAST_GEOJSON;
+  }
+
+  return rainForecastToGeoJson(forecast, selectedTimeIndex);
 }

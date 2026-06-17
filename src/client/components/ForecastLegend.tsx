@@ -9,8 +9,8 @@ export function ForecastLegend() {
         }}
       />
       <div class="mt-2 flex justify-between text-xs text-slate-300">
-        <span>0 mm/h</span>
-        <span>15+ mm/h</span>
+        <span>0 mm</span>
+        <span>15+ mm</span>
       </div>
       <p class="mt-2 text-xs leading-5 text-slate-400">
         Blue marks light rain, purple and red mark heavy precipitation.
