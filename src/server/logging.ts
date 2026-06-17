@@ -6,7 +6,7 @@ await configure({
     console: getConsoleSink({ formatter: ansiColorFormatter }),
   },
   loggers: [
-    { category: ['sample-project'], lowestLevel: logLevel, sinks: ['console'] },
+    { category: ['german-rain-forecast'], lowestLevel: logLevel, sinks: ['console'] },
     { category: ['logtape', 'meta'], lowestLevel: 'warning', sinks: ['console'] },
   ],
 });

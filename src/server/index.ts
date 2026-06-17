@@ -5,7 +5,7 @@ import { PORT } from './env.ts';
 import { forecastCache } from './forecast-cache.ts';
 import { wsFetch, websocket } from './ws.ts';
 
-const logger = getLogger(['sample-project', 'server']);
+const logger = getLogger(['german-rain-forecast', 'server']);
 
 const PUBLIC_DIR = join(import.meta.dir, '../../dist/public');
 

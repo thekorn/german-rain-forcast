@@ -8,7 +8,7 @@ await configure({
     console: getConsoleSink(),
   },
   loggers: [
-    { category: ['sample-project'], lowestLevel: 'debug', sinks: ['console'] },
+    { category: ['german-rain-forecast'], lowestLevel: 'debug', sinks: ['console'] },
     { category: ['logtape', 'meta'], lowestLevel: 'warning', sinks: ['console'] },
   ],
 });
