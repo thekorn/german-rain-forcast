@@ -84,6 +84,30 @@ describe('rain forecast API', () => {
     expect(body.precipitation).toEqual([[0, 1]]);
   });
 
+  test('does not let clients cache data while a refresh is in progress', async () => {
+    const response = await handleRainForecastApiRequest({
+      async getForecast() {
+        return {
+          times: ['2026-06-17T09:00:00'],
+          gridPoints: [{ latitude: 47, longitude: 6 }],
+          precipitation: [[1]],
+          cache: {
+            updatedAt: '2026-06-17T08:00:00.000Z',
+            expiresAt: '2026-06-17T09:00:00.000Z',
+            ttlMs: 60 * 60 * 1000,
+          },
+          refresh: {
+            status: 'refreshing',
+            lastStartedAt: '2026-06-17T09:05:00.000Z',
+          },
+        };
+      },
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Cache-Control')).toBe('no-cache');
+  });
+
   test('returns a proper error response when no forecast data is available', async () => {
     const service = new ForecastCacheService({
       fetcher: async () => Response.json({ reason: 'upstream unavailable' }, { status: 503 }),

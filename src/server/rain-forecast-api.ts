@@ -32,8 +32,9 @@ export async function handleRainForecastApiRequest(
 
     return Response.json(response, {
       headers: {
-        'Cache-Control':
-          response.refresh.status === 'stale' ? STALE_CACHE_CONTROL : SUCCESS_CACHE_CONTROL,
+        'Cache-Control': shouldRevalidateResponse(response.refresh.status)
+          ? STALE_CACHE_CONTROL
+          : SUCCESS_CACHE_CONTROL,
       },
     });
   } catch (error: unknown) {
@@ -54,6 +55,10 @@ export async function handleRainForecastApiRequest(
       },
     );
   }
+}
+
+function shouldRevalidateResponse(status: ForecastCacheSnapshot['refresh']['status']): boolean {
+  return status === 'stale' || status === 'refreshing';
 }
 
 function toRainForecastResponse(snapshot: ForecastCacheSnapshot): RainForecastResponse {
