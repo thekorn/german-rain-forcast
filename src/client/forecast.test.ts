@@ -45,6 +45,28 @@ describe('rainForecastToGeoJson', () => {
     });
   });
 
+  test('interpolates dense points across a complete forecast grid', () => {
+    const geoJson = rainForecastToGeoJson(createGridForecast(), 0);
+    const center = geoJson.features.find(
+      (feature) => feature.properties.latitude === 47.5 && feature.properties.longitude === 6.5,
+    );
+
+    expect(geoJson.features).toHaveLength(25);
+    expect(center).toEqual({
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [6.5, 47.5],
+      },
+      properties: {
+        precipitation: 6,
+        time: '2026-06-17T09:00:00',
+        latitude: 47.5,
+        longitude: 6.5,
+      },
+    });
+  });
+
   test('rejects invalid timestep and mismatched forecast shapes', () => {
     expect(() => rainForecastToGeoJson(createForecast(), 2)).toThrow(
       'Forecast timestep index 2 is out of range',
@@ -120,5 +142,19 @@ function createForecast(): RainForecastResponse {
     refresh: {
       status: 'fresh',
     },
+  };
+}
+
+function createGridForecast(): RainForecastResponse {
+  return {
+    ...createForecast(),
+    times: ['2026-06-17T09:00:00'],
+    gridPoints: [
+      { latitude: 47, longitude: 6 },
+      { latitude: 47, longitude: 7 },
+      { latitude: 48, longitude: 6 },
+      { latitude: 48, longitude: 7 },
+    ],
+    precipitation: [[0], [4], [8], [12]],
   };
 }
