@@ -33,7 +33,12 @@ export default function App(_props: RouteSectionProps) {
   createEffect(() => {
     const times = selectedForecast()?.times ?? [];
 
-    if (!isPlaying() || times.length < 2) return;
+    if (!isPlaying()) return;
+
+    if (times.length < 2) {
+      setIsPlaying(false);
+      return;
+    }
 
     const timer = setInterval(() => {
       setSelectedTimeIndex((index) => getNextForecastTimeIndex(times, index));

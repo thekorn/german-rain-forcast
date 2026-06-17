@@ -8,6 +8,7 @@ interface ForecastTimelineControlsProps {
 
 export function ForecastTimelineControls(props: ForecastTimelineControlsProps) {
   const hasTimes = () => props.times.length > 0;
+  const canPlay = () => props.times.length > 1;
   const selectedTime = () => props.times[props.selectedTimeIndex];
   const playbackLabel = () =>
     props.isPlaying ? 'Pause forecast playback' : 'Play forecast playback';
@@ -17,8 +18,9 @@ export function ForecastTimelineControls(props: ForecastTimelineControlsProps) {
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <button
           aria-label={playbackLabel()}
+          aria-pressed={props.isPlaying}
           class="rounded-full bg-sky-300 px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg ring-1 shadow-sky-950/30 ring-white/25 transition hover:bg-sky-200 focus:ring-2 focus:ring-sky-100 focus:outline-none disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-slate-400"
-          disabled={!hasTimes()}
+          disabled={!canPlay()}
           type="button"
           onClick={props.onTogglePlayback}
         >

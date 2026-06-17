@@ -88,6 +88,7 @@ mock.module('maplibre-gl', () => ({
 }));
 
 const App = (await import('./App.tsx')).default;
+const { ForecastTimelineControls } = await import('./components/ForecastTimelineControls.tsx');
 const { GermanyMap } = await import('./components/GermanyMap.tsx');
 
 describe('App', () => {
@@ -125,11 +126,77 @@ describe('App', () => {
     });
 
     const playButton = screen.getByRole('button', { name: 'Play forecast playback' });
+    expect(playButton).toHaveAttribute('aria-pressed', 'false');
     fireEvent.click(playButton);
-    expect(screen.getByRole('button', { name: 'Pause forecast playback' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Pause forecast playback' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
 
     fireEvent.click(screen.getByRole('button', { name: 'Pause forecast playback' }));
-    expect(screen.getByRole('button', { name: 'Play forecast playback' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Play forecast playback' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
+  });
+
+  test('creates one playback interval and clears it on pause and unmount', async () => {
+    const { unmount } = render(() => <App {...stubRouteProps} />);
+    const playButton = screen.getByRole('button', { name: 'Play forecast playback' });
+
+    await waitFor(() => {
+      expect(playButton).toBeEnabled();
+    });
+
+    const originalSetInterval = globalThis.setInterval;
+    const originalClearInterval = globalThis.clearInterval;
+    const intervalCalls: { callback: TimerHandler; delay?: number }[] = [];
+    const clearIntervalCalls: unknown[] = [];
+    let nextTimerId = 0;
+
+    globalThis.setInterval = ((callback: TimerHandler, delay?: number) => {
+      intervalCalls.push({ callback, delay });
+      nextTimerId += 1;
+      return nextTimerId;
+    }) as typeof globalThis.setInterval;
+    globalThis.clearInterval = ((timer?: unknown) => {
+      clearIntervalCalls.push(timer);
+    }) as typeof globalThis.clearInterval;
+
+    try {
+      fireEvent.click(playButton);
+
+      expect(intervalCalls).toHaveLength(1);
+      expect(intervalCalls[0]?.delay).toBe(400);
+      expect(clearIntervalCalls).toHaveLength(0);
+
+      fireEvent.click(screen.getByRole('button', { name: 'Pause forecast playback' }));
+      expect(clearIntervalCalls).toEqual([1]);
+
+      fireEvent.click(screen.getByRole('button', { name: 'Play forecast playback' }));
+      expect(intervalCalls).toHaveLength(2);
+
+      unmount();
+      expect(clearIntervalCalls).toEqual([1, 2]);
+    } finally {
+      globalThis.setInterval = originalSetInterval;
+      globalThis.clearInterval = originalClearInterval;
+    }
+  });
+
+  test('disables playback until there are at least two timesteps', () => {
+    render(() => (
+      <ForecastTimelineControls
+        isPlaying={false}
+        selectedTimeIndex={0}
+        times={['2099-06-17T09:00:00']}
+        onSelectTime={() => {}}
+        onTogglePlayback={() => {}}
+      />
+    ));
+
+    expect(screen.getByRole('button', { name: 'Play forecast playback' })).toBeDisabled();
+    expect(screen.getByRole('slider', { name: 'Forecast timestep' })).toBeEnabled();
   });
 
   test('initializes a Germany-centered MapLibre map and cleans it up', () => {

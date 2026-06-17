@@ -112,9 +112,10 @@ export function getInitialForecastTimeIndex(times: string[], now = new Date()): 
 }
 
 export function getPlayableForecastTimeIndices(times: string[], now = new Date()): number[] {
+  const nowKey = toBerlinTimeKey(now);
   const indices = times
     .map((time, index) => ({ index, key: toForecastTimeKey(time) }))
-    .filter(({ key }) => key >= toBerlinTimeKey(now))
+    .filter(({ key }) => key >= nowKey)
     .map(({ index }) => index);
 
   return indices.length > 0 ? indices : times.map((_, index) => index);
